@@ -1,6 +1,6 @@
 # HW5, HW6, HW7
 
-**Product Service (в директории hw5)**
+## Product Service (в директории hw5)
 
 В данном сервисе реализованы CRUD для сущности Product (поля: name, price). Переменные окружения настроены через конфигурацию запуска Intellij IDEA.
 
@@ -21,7 +21,7 @@
 5. DELETE запрос (удаление продукта по id)
 <img width="765" height="286" alt="Снимок экрана 2026-01-16 в 16 07 08" src="https://github.com/user-attachments/assets/06c10fdd-fdab-46e3-84cd-e671fb85a9c9" />
 
-**Delivery Service (в директории hw6)**
+## Delivery Service (в директории hw6)
 
 В данном сервисе реализована сущность Delivery (поля: productId, address). Переменные окружения настроены через конфигурацию запуска Intellij IDEA. Настроено взаимодействие сервисов через OpenFeign.
 Данный сервис создает новую доставку по id продукта и адресу. Сервис обращается на Product Service, чтобы проверить, существует ли продукт с переданным id.
@@ -31,7 +31,7 @@
 POST запрос (создание доставки)
 <img width="370" height="435" alt="Снимок экрана 2026-01-16 в 16 12 40" src="https://github.com/user-attachments/assets/781b213b-5179-4f73-848b-61af7f6599cd" />
 
-**Домашнее задание 7 - добавление Basic Auth в Product Service (в директории hw5)**
+## Домашнее задание 7 - добавление Basic Auth в Product Service (в директории hw5)
 
 В зависимости приложения добавлен spring security. Через переменные окружения был настроен пользователь с username и password.
 Добавлени security config с описанием правил доступа к ресурсам.
