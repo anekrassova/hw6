@@ -3,9 +3,11 @@ package org.example.hw5.service;
 import org.example.hw5.model.Product;
 import org.example.hw5.repo.ProductRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class ProductService {
@@ -36,8 +38,11 @@ public class ProductService {
     }
 
     //read all
-    public List<Product> getAllProducts() {
-        return productRepo.findAll();
+    @Async("productExecutor")
+    public CompletableFuture<List<Product>> getAllProducts() {
+        CompletableFuture<List<Product>> allProducts = new CompletableFuture<>();
+        allProducts.complete(productRepo.findAll());
+        return allProducts;
     }
 
     //update
