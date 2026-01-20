@@ -1,24 +1,21 @@
 package org.example.hw5.model;
 
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
 
-@Entity
 @Getter
 @Setter
-@Table(name="products")
 @NoArgsConstructor
+@Table("products")
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
     private double price;
 
     public Product(String name, double price) {

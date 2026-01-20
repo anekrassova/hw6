@@ -4,17 +4,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebFluxSecurity
 public class SecurityConfig {
+
     @Value("${app.security.username}")
     private String username;
 
@@ -22,27 +22,26 @@ public class SecurityConfig {
     private String password;
 
     @Bean
-    public UserDetailsService userDetailsService() {
+    public MapReactiveUserDetailsService userDetailsService() {
         UserDetails user = User
                 .withUsername(username)
                 .password("{noop}" + password)
                 .roles("USER")
                 .build();
 
-        return new InMemoryUserDetailsManager(user);
+        return new MapReactiveUserDetailsService(user);
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/prods/**").authenticated()
-                        .anyRequest().permitAll()
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+        return http
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .authorizeExchange(exchange -> exchange
+                        .pathMatchers("/prods/**").authenticated()
+                        .anyExchange().permitAll()
                 )
-                .httpBasic(Customizer.withDefaults());
-
-        return http.build();
+                .httpBasic(Customizer.withDefaults())
+                .build();
     }
-
 }
+

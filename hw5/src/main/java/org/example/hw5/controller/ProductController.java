@@ -5,9 +5,8 @@ import org.example.hw5.model.Product;
 import org.example.hw5.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/prods")
@@ -20,27 +19,27 @@ public class ProductController {
     }
 
     @PostMapping()
-    public Product createProduct(@RequestBody ProductRequest productRequest) {
+    public Mono<Product> createProduct(@RequestBody ProductRequest productRequest) {
         return productService.createProduct(productRequest.getName(), productRequest.getPrice());
     }
 
     @GetMapping("/{id}")
-    public Product getProduct(@PathVariable Long id){
+    public Mono<Product> getProduct(@PathVariable Long id){
         return productService.getProduct(id);
     }
 
     @GetMapping()
-    public CompletableFuture<List<Product>> getAllProduct(){
+    public Flux<Product> getAllProduct(){
         return productService.getAllProducts();
     }
 
     @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable Long id, @RequestBody ProductRequest productRequest){
+    public Mono<Product> updateProduct(@PathVariable Long id, @RequestBody ProductRequest productRequest){
         return productService.updateProduct(id, productRequest.getName(), productRequest.getPrice());
     }
 
     @DeleteMapping("/{id}")
-    public void deleteProduct(@PathVariable Long id){
-        productService.deleteProduct(id);
+    public Mono<Void> deleteProduct(@PathVariable Long id){
+        return productService.deleteProduct(id);
     }
 }

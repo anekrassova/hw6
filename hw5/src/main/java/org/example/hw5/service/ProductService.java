@@ -3,11 +3,11 @@ package org.example.hw5.service;
 import org.example.hw5.model.Product;
 import org.example.hw5.repo.ProductRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 public class ProductService {
@@ -19,12 +19,12 @@ public class ProductService {
     }
 
     //create
-    public Product createProduct(String productName, Double price) {
+    public Mono<Product> createProduct(String productName, Double price) {
         if (productName == null || productName.isBlank()) {
-            throw new IllegalArgumentException("Product name cannot be empty");
+            return Mono.error(new IllegalArgumentException("Product name cannot be blank"));
         }
         if (price == null || price <= 0) {
-            throw new IllegalArgumentException("Price must be greater than 0");
+            return Mono.error(new IllegalArgumentException("Product price cannot be less than 0"));
         }
 
         Product product = new Product(productName, price);
@@ -32,39 +32,48 @@ public class ProductService {
     }
 
     //read one
-    public Product getProduct(Long id) {
+    public Mono<Product> getProduct(Long id) {
         return productRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .switchIfEmpty(Mono.error(new RuntimeException("Product not found")));
     }
 
     //read all
-    @Async("productExecutor")
-    public CompletableFuture<List<Product>> getAllProducts() {
-        CompletableFuture<List<Product>> allProducts = new CompletableFuture<>();
-        allProducts.complete(productRepo.findAll());
-        return allProducts;
+    public Flux<Product> getAllProducts() {
+        return productRepo.findAll();
     }
 
     //update
-    public Product updateProduct(Long id, String productName, Double price) {
-        Product product = productRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+    public Mono<Product> updateProduct(Long id, String productName, Double price) {
+        if (productName == null || productName.isBlank()) {
+            return Mono.error(new IllegalArgumentException("Product name cannot be blank"));
+        }
 
-        product.setName(productName);
-        product.setPrice(price);
+        if (price == null || price <= 0) {
+            return Mono.error(new IllegalArgumentException("Product price cannot be less than 0"));
+        }
 
-        return productRepo.save(product);
+        return productRepo.findById(id)
+                .switchIfEmpty(Mono.error(new RuntimeException("Product not found")))
+                .flatMap(product -> {
+                    product.setName(productName);
+                    product.setPrice(price);
+                    return productRepo.save(product);
+                });
     }
 
     //delete
-    public void deleteProduct(Long id) {
-        if (!productRepo.existsById(id)) {
-            throw new RuntimeException("Product not found");
-        }
-        productRepo.deleteById(id);
+    public Mono<Void> deleteProduct(Long id) {
+        return productRepo.existsById(id)
+                .flatMap(exists -> {
+                    if (!exists) {
+                        return Mono.error(new RuntimeException("Product not found"));
+                    } else {
+                        return productRepo.deleteById(id);
+                    }
+                });
     }
 
-    public boolean existsProductById(Long id) {
+    public Mono<Boolean> existsProductById(Long id) {
         return productRepo.existsById(id);
     }
 }

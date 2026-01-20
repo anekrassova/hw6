@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/product/api")
@@ -18,7 +19,7 @@ public class ClientController {
     }
 
     @GetMapping("/exists/{id}")
-    public boolean productExistById(@PathVariable Long id) {
+    public Mono<Boolean> productExistById(@PathVariable Long id) {
         return productService.existsProductById(id);
     }
 }
