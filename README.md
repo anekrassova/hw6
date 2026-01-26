@@ -69,5 +69,6 @@ POST запрос (создание доставки)
 3. Для агрегации данных использованы возможности Project Reactor (Mono, Flux, flatMap, zip). Для каждого продукта выполняются параллельные запросы в Product Service и Delivery Service с последующим объединением результатов.
 4. В Delivery Service была доработана логика получения доставки для продукта по id.
 
-Демонстрация:
+*Демонстрация:*
+
 <img width="452" height="542" alt="Снимок экрана 2026-01-26 в 14 59 44" src="https://github.com/user-attachments/assets/b0193fd5-cf0a-44c8-9efe-e6e313c57975" />
