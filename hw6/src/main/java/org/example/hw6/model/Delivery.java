@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -21,8 +23,16 @@ public class Delivery {
     @Column(nullable = false)
     private String address;
 
+    @Column(nullable = false)
+    private DeliveryStatus status;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
     public Delivery(Long productId, String address) {
         this.productId = productId;
         this.address = address;
+        this.status = DeliveryStatus.CREATED;
+        this.createdAt = LocalDateTime.now();
     }
 }
