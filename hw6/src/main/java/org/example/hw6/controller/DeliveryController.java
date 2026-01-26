@@ -5,6 +5,7 @@ import org.example.hw6.dto.DeliveryUpdateStatus;
 import org.example.hw6.model.Delivery;
 import org.example.hw6.service.DeliveryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,8 +24,9 @@ public class DeliveryController {
     }
 
     @PostMapping()
-    public Delivery createDelivery (@RequestBody DeliveryPost deliveryPost) {
-        return deliveryService.createDelivery(deliveryPost.getProductId(), deliveryPost.getAddress());
+    public ResponseEntity<?> createDelivery (@RequestBody DeliveryPost deliveryPost) {
+        Delivery delivery = deliveryService.createDelivery(deliveryPost);
+        return ResponseEntity.ok(delivery);
     }
 
     @PutMapping
